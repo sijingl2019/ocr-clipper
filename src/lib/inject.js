@@ -83,7 +83,7 @@ export function pageToggleFixed(hide) {
 // 页面内容签名：用于判断翻页是否生效
 export function pageSignature() {
   const el = document.querySelector('[data-ocrclipper-scroll]') || document.body;
-  const text = (el?.innerText || '').slice(0, 20000);
+  const text = document.title + '\n' + (el?.innerText || '').slice(0, 20000);
   let h = 0;
   for (let i = 0; i < text.length; i++) h = (h * 31 + text.charCodeAt(i)) | 0;
   return { url: location.href, hash: h, len: text.length, ready: document.readyState };
@@ -105,7 +105,8 @@ export function pageCandidates() {
     if (seen.has(e) || out.length >= 150) continue;
     seen.add(e);
     const r = e.getBoundingClientRect();
-    if (r.width < 4 || r.height < 4 || r.bottom < 0 || r.right < 0 || r.top > vh || r.left > vw) continue;
+    // 不限制纵向位置：滚动阅读模式下"下一章"常在页面底部、视口之外
+    if (r.width < 4 || r.height < 4 || r.right < 0 || r.left > vw) continue;
     const cs = getComputedStyle(e);
     if (cs.visibility === 'hidden' || cs.display === 'none' || +cs.opacity === 0) continue;
     const text = (e.innerText || e.value || '').trim().replace(/\s+/g, ' ').slice(0, 40);
@@ -131,6 +132,7 @@ export function pageCandidates() {
       cls: cls.trim().slice(0, 60),
       href: e.getAttribute('href') || '',
       score,
+      inView: r.bottom > 0 && r.top < vh,
       rect: { x: Math.round(r.left), y: Math.round(r.top), w: Math.round(r.width), h: Math.round(r.height) },
     });
   }
@@ -138,10 +140,20 @@ export function pageCandidates() {
   return { candidates: out, linkNext, viewport: { w: vw, h: vh }, dpr: devicePixelRatio };
 }
 
+// 把候选按钮滚动到视口中（与点击分开，便于在滚动之后再记录"翻页前"的状态）
+export function pageRevealCandidate(id) {
+  const e = document.querySelector(`[data-ocrclipper-cand="${id}"]`);
+  if (!e) return false;
+  const r = e.getBoundingClientRect();
+  if (r.top < 0 || r.bottom > innerHeight || r.left < 0 || r.right > innerWidth) {
+    e.scrollIntoView({ block: 'center', inline: 'center' });
+  }
+  return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve(true))));
+}
+
 export function pageClickCandidate(id) {
   const e = document.querySelector(`[data-ocrclipper-cand="${id}"]`);
   if (!e) return false;
-  e.scrollIntoView({ block: 'center', inline: 'center' });
   e.click();
   return true;
 }

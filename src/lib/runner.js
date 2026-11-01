@@ -94,6 +94,7 @@ export class Runner {
     const pager = new NextPager(tab, settings, { log: this.log, signal });
     this.onState(true);
     let prevFp = null;
+    let retried = false;
     try {
       for (let i = 0; i < maxPages; i++) {
         const [active] = await chrome.tabs.query({ active: true, windowId: tab.windowId });
@@ -104,9 +105,19 @@ export class Runner {
         if (!slices.length) throw new Error('截图为空');
         const fp = await imageFingerprint(slices[0]);
         if (fpSimilar(fp, prevFp)) {
+          // 可能是翻页没有真正生效（例如页面只响应真实点击），用可信点击重试一次
+          if (!retried) {
+            retried = true;
+            this.log('页面内容与上一页相同，可能翻页未生效，重试翻页…');
+            if (await pager.next({ forceTrusted: true })) {
+              i--;
+              continue;
+            }
+          }
           this.log('页面内容与上一页相同，判定为已到末页');
           break;
         }
+        retried = false;
         prevFp = fp;
         const page = await addPage({ url: cur.url, title: cur.title, slices, thumb: await makeThumb(slices[0]) });
         this.log(`第 ${i + 1} 页：已截取 ${slices.length} 张切片，加入 OCR 队列`);

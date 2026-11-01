@@ -57,7 +57,7 @@ export function formatCandidates(candidates) {
         .filter(Boolean)
         .join(' ');
       const r = c.rect;
-      return `[${c.id}] <${c.tag}> "${label}" @ (${r.x},${r.y},${r.w},${r.h})`;
+      return `[${c.id}] <${c.tag}> "${label}" @ (${r.x},${r.y},${r.w},${r.h})${c.inView === false ? ' [视口外，需滚动]' : ''}`;
     })
     .join('\n');
 }

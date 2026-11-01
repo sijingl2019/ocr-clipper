@@ -1,7 +1,14 @@
 // 自动翻页：规则匹配 → 智能体判断（截图 + 候选元素列表）→ 点击 → 等待页面变化。
 // 一旦智能体选中了某个按钮，会记住它的特征，后续页面直接复用，不再重复询问智能体。
 import { exec, captureViewportBlob } from './capture.js';
-import { pageCandidates, pageClickCandidate, pageClickSelector, pageElementCenter, pageSignature } from './inject.js';
+import {
+  pageCandidates,
+  pageClickCandidate,
+  pageClickSelector,
+  pageElementCenter,
+  pageRevealCandidate,
+  pageSignature,
+} from './inject.js';
 import { askNextButton } from './agent.js';
 import { imageFingerprint } from './image.js';
 import { trustedClick, pressKey } from './cdp.js';
@@ -23,6 +30,7 @@ export class NextPager {
     this.log = log;
     this.signal = signal;
     this.learned = null;
+    this.trustedOnly = false;
   }
 
   async safeSig() {
@@ -94,7 +102,8 @@ export class NextPager {
   }
 
   // 执行一次翻页，返回 true 表示进入了新页面，false 表示已到末页 / 无法翻页
-  async next() {
+  // forceTrusted：跳过合成 click，直接用可信鼠标事件（用于"翻页后内容未变"的重试）
+  async next({ forceTrusted = false } = {}) {
     const s = this.settings;
     const beforeSig = await this.safeSig();
     const beforeFp = await this.fingerprint();
@@ -151,20 +160,29 @@ export class NextPager {
     }
 
     if ('id' in choice) {
-      const center = await exec(this.tab.id, pageElementCenter, [choice.id]);
-      await exec(this.tab.id, pageClickCandidate, [choice.id]);
-      if (await this.waitChange(beforeSig, beforeFp)) {
-        this.learned = { tag: cand.tag, text: cand.text, label: cand.label };
-        return true;
-      }
-      // 合成 click 无效时，改用可信的鼠标事件再试一次
-      if (center) {
+      // 先把按钮滚动到视口内并等待稳定，再记录"翻页前"状态；
+      // 否则滚动本身造成的画面变化会被误判为翻页成功
+      await exec(this.tab.id, pageRevealCandidate, [choice.id]);
+      await sleep(400);
+      const sig0 = await this.safeSig();
+      const fp0 = await this.fingerprint();
+      const learned = { tag: cand.tag, text: cand.text, label: cand.label };
+
+      if (!this.trustedOnly && !forceTrusted) {
+        await exec(this.tab.id, pageClickCandidate, [choice.id]);
+        if (await this.waitChange(sig0, fp0)) {
+          this.learned = learned;
+          return true;
+        }
+        // 合成 click 无效：本次运行之后都直接使用可信鼠标事件
         this.log('普通点击无效，改用模拟真实鼠标点击');
-        const c2 = await exec(this.tab.id, pageElementCenter, [choice.id]);
-        const pt = c2 || center;
+        this.trustedOnly = true;
+      }
+      const pt = await exec(this.tab.id, pageElementCenter, [choice.id]);
+      if (pt) {
         await trustedClick(this.tab.id, pt.x, pt.y);
-        if (await this.waitChange(beforeSig, beforeFp)) {
-          this.learned = { tag: cand.tag, text: cand.text, label: cand.label };
+        if (await this.waitChange(sig0, fp0)) {
+          this.learned = learned;
           return true;
         }
       }
