@@ -1,0 +1,4 @@
+node_modules/
+host/com.ocrclipper.host.json
+host/ocr-clipper-host.bat
+host/ocr-clipper-host.sh

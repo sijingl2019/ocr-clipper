@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "OCR Clipper",
+  "version": "0.1.0",
+  "description": "滚动截屏 + 本机智能体 OCR，自动翻页，导出 EPUB / PDF / TXT / Markdown / HTML",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtUjqcP0MClKAwSO8Z5c8H6Un9FKr+LvOGHN1aLpIvTFG34uh7FJcyki7AWyMfOcfoqmrJ+6glf5X4Z7w0HidagnbfEAJjeubNvxUz0axRFvQN+cxx0b7RtqKOToFuZLgtHLKOoiGGh6dOWHC1s6349wD1tKNHyVQFhIb4vQtO5DG7JMNE06ZAO1SCbcSPnSTCkmUWmJaCRWSxWo7DCnqnK5heXl0W2NTXuGaDmVAAexla00jD5EdzneVGv1fFCUXK/IwQo5TUv/0ZE7xIV1gR3zIJOhZDYtiLe1ONoeefWrtXNxwh/PAKvuuA8VOpfUdb/yURGUduOD3SS0lfIDDsQIDAQAB",
+  "permissions": [
+    "sidePanel",
+    "tabs",
+    "scripting",
+    "storage",
+    "unlimitedStorage",
+    "nativeMessaging",
+    "downloads",
+    "debugger"
+  ],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "side_panel": {
+    "default_path": "src/sidepanel/sidepanel.html"
+  },
+  "action": {
+    "default_title": "OCR Clipper"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

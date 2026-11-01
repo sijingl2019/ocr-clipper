@@ -1,0 +1,94 @@
+:root {
+  --bg: #fbfaf8;
+  --panel: #ffffff;
+  --text: #1d1d1f;
+  --muted: #6b6b70;
+  --line: #e4e2dd;
+  --accent: #2f6f5e;
+  --accent-text: #ffffff;
+  --danger: #b23b3b;
+  --ok: #2f7d4f;
+  --warn: #a8661c;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1b1c1e;
+    --panel: #242528;
+    --text: #ececec;
+    --muted: #9b9ba1;
+    --line: #36373b;
+    --accent: #5fb39a;
+    --accent-text: #0f1a16;
+    --danger: #e07070;
+    --ok: #6fc28f;
+    --warn: #e0a85a;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font: 13px/1.5 system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px; border-bottom: 1px solid var(--line); background: var(--panel);
+}
+.pill { font-size: 11px; padding: 2px 8px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); }
+.pill.ok { color: var(--ok); border-color: var(--ok); }
+.pill.err { color: var(--danger); border-color: var(--danger); }
+.tabs { display: flex; background: var(--panel); border-bottom: 1px solid var(--line); }
+.tabs button {
+  flex: 1; border: 0; background: none; padding: 9px 0; color: var(--muted); cursor: pointer;
+  border-bottom: 2px solid transparent; font: inherit;
+}
+.tabs button.active { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
+.tab { display: none; padding: 12px 14px 40px; }
+.tab.active { display: block; }
+h3 { font-size: 13px; margin: 18px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; min-width: 0; flex: 1; }
+.field > label { font-size: 12px; color: var(--muted); }
+.row { display: flex; gap: 10px; }
+input, select, textarea, button { font: inherit; color: inherit; }
+input:not([type=checkbox]):not([type=radio]), select, textarea {
+  width: 100%; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel);
+}
+textarea { resize: vertical; font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
+.seg { display: flex; flex-direction: column; gap: 4px; }
+.seg label, .check { display: flex; align-items: center; gap: 6px; cursor: pointer; margin-bottom: 6px; }
+.hint { color: var(--muted); font-size: 11px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+button {
+  padding: 6px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel); cursor: pointer;
+}
+button:hover:not(:disabled) { border-color: var(--accent); }
+button:disabled { opacity: 0.5; cursor: default; }
+button.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); font-weight: 600; }
+button.danger { color: var(--danger); }
+#log {
+  margin: 0; padding: 6px 8px 6px 28px; max-height: 260px; overflow: auto; font-size: 12px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 6px; min-height: 40px;
+}
+#log li.err { color: var(--danger); }
+#log li time { color: var(--muted); margin-right: 6px; font-variant-numeric: tabular-nums; }
+.mono { font-family: ui-monospace, Consolas, monospace; font-size: 11px; white-space: pre-wrap; word-break: break-all; }
+#hostInfo { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 8px; min-height: 30px; }
+.page {
+  display: grid; grid-template-columns: 72px 1fr; gap: 8px; padding: 10px 0; border-top: 1px solid var(--line);
+}
+.page img { width: 72px; border: 1px solid var(--line); border-radius: 4px; cursor: zoom-in; }
+.page .meta { display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.page .meta .title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.page textarea { margin-top: 4px; font-family: inherit; font-size: 12px; }
+.page .tools { display: flex; gap: 4px; flex-shrink: 0; }
+.page .tools button { padding: 1px 6px; font-size: 11px; }
+.status-done { color: var(--ok); }
+.status-error { color: var(--danger); }
+.status-ocr, .status-pending { color: var(--warn); }
+.err-text { color: var(--danger); font-size: 11px; }
+dialog { max-width: 95vw; max-height: 95vh; border: 1px solid var(--line); background: var(--panel); color: var(--text); }
+dialog img { max-width: 100%; display: block; }
+body:not(.continuous) .continuous-only { display: none; }
