@@ -100,7 +100,7 @@ export class Runner {
         const [active] = await chrome.tabs.query({ active: true, windowId: tab.windowId });
         if (active?.id !== tab.id) throw new Error('目标标签页已不在前台，请切回该标签页后重新开始');
         const cur = await chrome.tabs.get(tab.id);
-        this.log(`第 ${i + 1} 页：截屏中…`);
+        this.log(`第 ${i + 1} 页：截屏中…（${cur.title}）`);
         const { slices } = await capturePage(cur, settings, { mode, log: this.log, signal });
         if (!slices.length) throw new Error('截图为空');
         const fp = await imageFingerprint(slices[0]);

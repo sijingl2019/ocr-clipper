@@ -14,6 +14,7 @@ import { imageFingerprint } from './image.js';
 import { trustedClick, pressKey } from './cdp.js';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+export const PREV_RE = /上一页|上一章|上一节|上一篇|上页|前一页|previous|\bprev\b|‹|«|←/i;
 const sameSig = (a, b) => a && b && a.url === b.url && a.hash === b.hash && a.len === b.len;
 
 function fpDiff(a, b) {
@@ -153,6 +154,11 @@ export class NextPager {
       if ('id' in choice) {
         cand = info.candidates.find((c) => c.id === choice.id);
         if (!cand) throw new Error(`智能体返回的编号 ${choice.id} 不存在`);
+        // 兜底：绝不点击"上一页 / 上一章"之类的后退按钮，避免回到已采集过的页面
+        if (PREV_RE.test(`${cand.text} ${cand.label}`)) {
+          this.log(`智能体选择了后退按钮「${cand.text || cand.label}」，已忽略，视为没有下一页`);
+          return false;
+        }
         this.log(`智能体选择「${cand.text || cand.label}」`);
       } else {
         this.log(`智能体给出坐标 (${choice.x}, ${choice.y})`);
