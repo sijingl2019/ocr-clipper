@@ -1,7 +1,7 @@
 param(
-  # Extension IDs allowed to talk to the host. The default is the unpacked dev build (fixed by the
-  # manifest "key"); add the Chrome Web Store ID after publishing, e.g. -ExtensionId id1,id2
-  [string[]]$ExtensionId = @('alniecnjlgpfdfolhnmflgcjmomdianc')
+  # Extension IDs allowed to talk to the host. Defaults: the Chrome Web Store build and the unpacked
+  # dev build (fixed by the manifest "key"). Pass others as -ExtensionId id1,id2
+  [string[]]$ExtensionId = @('pjifjammphdlfkbaekgmngkjejbdohae', 'alniecnjlgpfdfolhnmflgcjmomdianc')
 )
 # Register the OCR Clipper native messaging host for Chrome / Edge / Brave / Chromium (current user).
 # Usage: powershell -ExecutionPolicy Bypass -File host\install-windows.ps1 [-ExtensionId <id>[,<id>...]]
