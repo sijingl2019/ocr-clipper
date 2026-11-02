@@ -64,6 +64,17 @@ Chrome 扩展（侧边栏）                       本机 host（Node.js，Nativ
 ```
 npm test        # 单元测试 + host 端到端测试（用 node 充当假智能体）
 npm run icons   # 重新生成图标
+npm run build   # 打包应用店上传包 dist/ocr-clipper-<version>.zip
 ```
+
+## 发布到 Chrome 网上应用店
+
+1. 修改 `manifest.json` 的 `version`，运行 `npm run build`。打包时会去掉 manifest 中的 `key`（应用店不接受这个字段），并且只打包 `manifest.json`、`src/`、`icons/`。
+2. 在 [Chrome 网上应用店开发者控制台](https://chrome.google.com/webstore/devconsole) 上传 zip，按 `store/STORE_LISTING.md` 填写说明、权限理由和数据使用披露，隐私权政策填 `store/PRIVACY.md` 的链接。
+3. 发布后应用店会分配新的扩展 ID。本机 host 需要授权这个 ID，用户安装时这样运行（可以和开发版 ID 同时授权）：
+   - Windows：`powershell -ExecutionPolicy Bypass -File host\install-windows.ps1 -ExtensionId <应用店ID>,alniecnjlgpfdfolhnmflgcjmomdianc`
+   - macOS / Linux：`sh host/install.sh <应用店ID> alniecnjlgpfdfolhnmflgcjmomdianc`
+
+   未授权时，侧边栏的 host 状态提示里会显示当前扩展 ID 和需要运行的命令。
 
 调试日志：`%TEMP%\ocr-clipper-host.log`。

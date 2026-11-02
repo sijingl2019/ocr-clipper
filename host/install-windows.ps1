@@ -1,8 +1,10 @@
 param(
-  [string]$ExtensionId = 'alniecnjlgpfdfolhnmflgcjmomdianc'
+  # Extension IDs allowed to talk to the host. The default is the unpacked dev build (fixed by the
+  # manifest "key"); add the Chrome Web Store ID after publishing, e.g. -ExtensionId id1,id2
+  [string[]]$ExtensionId = @('alniecnjlgpfdfolhnmflgcjmomdianc')
 )
 # Register the OCR Clipper native messaging host for Chrome / Edge / Brave / Chromium (current user).
-# Usage: powershell -ExecutionPolicy Bypass -File host\install-windows.ps1 [-ExtensionId <id>]
+# Usage: powershell -ExecutionPolicy Bypass -File host\install-windows.ps1 [-ExtensionId <id>[,<id>...]]
 $ErrorActionPreference = 'Stop'
 $hostDir = $PSScriptRoot
 $node = (Get-Command node.exe -ErrorAction SilentlyContinue).Source
@@ -18,7 +20,7 @@ $manifest = [ordered]@{
   description     = 'OCR Clipper native host'
   path            = $bat
   type            = 'stdio'
-  allowed_origins = @("chrome-extension://$ExtensionId/")
+  allowed_origins = @($ExtensionId | ForEach-Object { $_.Split(',') } | ForEach-Object { $_.Trim() } | Where-Object { $_ } | ForEach-Object { "chrome-extension://$_/" })
 }
 [IO.File]::WriteAllText($manifestPath, ($manifest | ConvertTo-Json), (New-Object Text.UTF8Encoding $false))
 
@@ -37,5 +39,5 @@ Write-Host "Installed native host:"
 Write-Host "  manifest : $manifestPath"
 Write-Host "  launcher : $bat"
 Write-Host "  node     : $node"
-Write-Host "  allowed  : chrome-extension://$ExtensionId/"
+Write-Host "  allowed  : $($manifest.allowed_origins -join ', ')"
 Write-Host "Reload the extension (chrome://extensions) and click 'detect' in the settings tab."

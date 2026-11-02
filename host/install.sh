@@ -1,8 +1,11 @@
 #!/bin/sh
 # Register the OCR Clipper native messaging host on macOS / Linux (current user).
-# Usage: sh host/install.sh [extension-id]
+# Usage: sh host/install.sh [extension-id ...]
+# The default ID is the unpacked dev build; pass the Chrome Web Store ID too after publishing.
 set -e
-EXT_ID="${1:-alniecnjlgpfdfolhnmflgcjmomdianc}"
+[ $# -gt 0 ] || set -- alniecnjlgpfdfolhnmflgcjmomdianc
+ORIGINS=""
+for id in "$@"; do ORIGINS="$ORIGINS${ORIGINS:+, }\"chrome-extension://$id/\""; done
 HOST_DIR="$(cd "$(dirname "$0")" && pwd)"
 NODE="$(command -v node || true)"
 [ -n "$NODE" ] || { echo "node not found in PATH; install Node.js 18+ first" >&2; exit 1; }
@@ -22,7 +25,7 @@ MANIFEST=$(cat <<EOF
   "description": "OCR Clipper native host",
   "path": "$LAUNCHER",
   "type": "stdio",
-  "allowed_origins": ["chrome-extension://$EXT_ID/"]
+  "allowed_origins": [$ORIGINS]
 }
 EOF
 )

@@ -22,8 +22,12 @@ function connect() {
 }
 
 function hostHint(msg) {
-  if (/not found|not exist|forbidden|Specified native messaging host/i.test(msg)) {
-    return `${msg}。请先运行 host 目录下的安装脚本（Windows: install-windows.ps1；macOS/Linux: install.sh），然后重新加载扩展。`;
+  const id = chrome.runtime.id;
+  if (/forbidden/i.test(msg)) {
+    return `${msg}。本机 host 未授权当前扩展（ID: ${id}）。请重新运行安装脚本并加入该 ID：Windows: install-windows.ps1 -ExtensionId ${id}；macOS/Linux: sh install.sh ${id}`;
+  }
+  if (/not found|not exist|Specified native messaging host/i.test(msg)) {
+    return `${msg}。请先安装本机 host：Windows: install-windows.ps1 -ExtensionId ${id}；macOS/Linux: sh install.sh ${id}，然后重新加载扩展。`;
   }
   return msg;
 }
