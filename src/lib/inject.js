@@ -89,6 +89,19 @@ export function pageSignature() {
   return { url: location.href, hash: h, len: text.length, ready: document.readyState };
 }
 
+// 视口内是否有可见的加载指示（转圈 / 骨架屏 / aria-busy）
+export function pageBusy() {
+  if (document.readyState === 'loading') return true;
+  const sel = '[aria-busy="true"],[class*="loading" i],[class*="spinner" i],[class*="skeleton" i]';
+  for (const el of document.querySelectorAll(sel)) {
+    const r = el.getBoundingClientRect();
+    if (r.width < 4 || r.height < 4 || r.bottom < 0 || r.right < 0 || r.top > innerHeight || r.left > innerWidth) continue;
+    const s = getComputedStyle(el);
+    if (s.display !== 'none' && s.visibility !== 'hidden' && +s.opacity > 0.05) return true;
+  }
+  return false;
+}
+
 // 收集视口内可见的可点击元素作为"下一页"候选，并给每个打上编号。
 // 同时用规则计算一个启发式得分。
 export function pageCandidates() {

@@ -136,3 +136,11 @@ export async function imageFingerprint(blob) {
   for (let i = 0; i < d.length; i += 4) s += ((d[i] + d[i + 1] + d[i + 2]) / 48) | 0;
   return s;
 }
+
+// 画面几乎是纯色（空白 / 只有一个转圈）
+export function fpBlank(fp) {
+  if (!fp) return true;
+  const n = {};
+  for (const c of fp) n[c] = (n[c] || 0) + 1;
+  return Math.max(...Object.values(n)) / fp.length > 0.97;
+}

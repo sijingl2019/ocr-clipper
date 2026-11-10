@@ -6,11 +6,12 @@ import {
   pageClickCandidate,
   pageClickSelector,
   pageElementCenter,
+  pageBusy,
   pageRevealCandidate,
   pageSignature,
 } from './inject.js';
 import { askNextButton } from './agent.js';
-import { imageFingerprint } from './image.js';
+import { imageFingerprint, fpBlank } from './image.js';
 import { trustedClick, pressKey } from './cdp.js';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -79,8 +80,25 @@ export class NextPager {
     if (changed) {
       await this.waitTabComplete();
       await sleep(this.settings.settleMs);
+      await this.waitReady();
     }
     return changed;
+  }
+
+  // 翻页后内容可能仍在异步加载：等到无加载指示、画面非空白且连续两次一致
+  async waitReady() {
+    const deadline = Date.now() + this.settings.pageChangeTimeoutMs;
+    let prev = null;
+    while (Date.now() < deadline) {
+      if (this.signal?.aborted) throw new DOMException('已取消', 'AbortError');
+      // 翻页前就一直存在的"加载"元素视为常驻装饰，忽略
+      const busy = !this.busyBefore && (await exec(this.tab.id, pageBusy).catch(() => true));
+      const fp = await this.fingerprint();
+      if (!busy && !fpBlank(fp) && prev && fpDiff(fp, prev) < 0.01) return;
+      prev = fp;
+      await sleep(400);
+    }
+    this.log('等待页面内容加载超时，继续截图');
   }
 
   async waitTabComplete() {
@@ -108,6 +126,7 @@ export class NextPager {
     const s = this.settings;
     const beforeSig = await this.safeSig();
     const beforeFp = await this.fingerprint();
+    this.busyBefore = await exec(this.tab.id, pageBusy).catch(() => false);
 
     if (s.nextStrategy === 'key') {
       this.log(`按键翻页：${s.nextKey}`);
