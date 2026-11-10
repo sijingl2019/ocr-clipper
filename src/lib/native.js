@@ -3,6 +3,7 @@
 // 响应: { id, ok, result | error }；大于 1MB 的响应会被拆成 { id, chunk, seq, last } 分片发送。
 
 export const HOST_NAME = 'com.ocrclipper.host';
+const HOST_ZIP_URL = 'https://github.com/sijingl2019/ocr-clipper/releases/latest/download/ocr-clipper-host.zip';
 
 let port = null;
 let nextId = 1;
@@ -27,7 +28,7 @@ function hostHint(msg) {
     return `${msg}。本机 host 未授权当前扩展（ID: ${id}）。请重新运行安装脚本并加入该 ID：Windows: install-windows.ps1 -ExtensionId ${id}；macOS/Linux: sh install.sh ${id}`;
   }
   if (/not found|not exist|Specified native messaging host/i.test(msg)) {
-    return `${msg}。请先安装本机 host：Windows: install-windows.ps1 -ExtensionId ${id}；macOS/Linux: sh install.sh ${id}，然后重新加载扩展。`;
+    return `${msg}。请先安装本机组件：下载 ${HOST_ZIP_URL} 解压，Windows 双击 install-windows.cmd，macOS/Linux 运行 sh install.sh，然后重启浏览器。`;
   }
   return msg;
 }

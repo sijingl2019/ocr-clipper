@@ -93,3 +93,7 @@ button.danger { color: var(--danger); }
 dialog { max-width: 95vw; max-height: 95vh; border: 1px solid var(--line); background: var(--panel); color: var(--text); }
 dialog img { max-width: 100%; display: block; }
 body:not(.continuous) .continuous-only { display: none; }
+.setup { border: 1px solid var(--warn); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; background: var(--panel); }
+.setup ol { margin: 6px 0 0; padding-left: 18px; }
+.setup li { margin: 4px 0; }
+.setup a { color: var(--accent); }

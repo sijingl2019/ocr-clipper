@@ -20,7 +20,7 @@ OCR Clipper 把网页（包括 canvas 渲染、无法复制文字的在线阅读
 - 每页结果可预览、编辑、调整顺序、重新识别
 - 导出 EPUB、PDF（带文字层）、TXT、Markdown、HTML，可合并跨页断句、按标题分章
 
-使用前需要安装配套的本机组件（Native Messaging host），用于调用本机智能体与截图工具，安装方法见项目主页。所有截图和识别都在你的电脑上进行，扩展本身不会把数据上传到任何服务器。
+使用前需要安装配套的本机组件（Native Messaging host），用于调用本机智能体与截图工具，下载地址：https://github.com/sijingl2019/ocr-clipper/releases/latest/download/ocr-clipper-host.zip（解压后 Windows 双击 install-windows.cmd，macOS/Linux 运行 sh install.sh；侧边栏未连接时也会显示安装步骤）。所有截图和识别都在你的电脑上进行，扩展本身不会把数据上传到任何服务器。
 
 ## 单一用途说明（Single purpose）
 

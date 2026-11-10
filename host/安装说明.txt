@@ -1,0 +1,11 @@
+OCR Clipper 本机组件（Native Messaging host）
+
+1. 安装 Node.js 18 或更新版本：https://nodejs.org
+2. 把本文件夹解压到一个固定位置（安装后不要移动或删除，移动后需重新安装）。
+3. 安装：
+   - Windows：双击 install-windows.cmd
+   - macOS / Linux：在终端运行 sh install.sh
+4. 回到浏览器，在 chrome://extensions 重新加载 OCR Clipper，或重启浏览器。
+
+卸载（Windows）：powershell -ExecutionPolicy Bypass -File uninstall-windows.ps1
+日志：系统临时目录下的 ocr-clipper-host.log

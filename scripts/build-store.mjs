@@ -52,3 +52,18 @@ const out = join(ROOT, 'dist', `ocr-clipper-${manifest.version}.zip`);
 writeFileSync(out, Buffer.from(await zip.arrayBuffer()));
 console.log(`已生成 ${relative(ROOT, out)}（${entries.length} 个文件，${(zip.size / 1024).toFixed(1)} KB）`);
 for (const e of entries) console.log('  ' + e.name);
+
+// 本机 host 下载包：dist/ocr-clipper-host.zip（上传到 GitHub Release，侧边栏里的下载链接指向它）
+// 不含安装时生成的文件（.bat / .sh 启动器、host 清单）
+const GENERATED = /^(ocr-clipper-host\.(bat|sh)|com\.ocrclipper\.host\.json)$/;
+const hostDir = join(ROOT, 'host');
+const hostEntries = walk(hostDir)
+  .sort()
+  .map((f) => relative(hostDir, f).split(sep).join('/'))
+  .filter((n) => !GENERATED.test(n))
+  .map((n) => ({ name: 'ocr-clipper-host/' + n, data: new Uint8Array(readFileSync(join(hostDir, n))) }));
+const hostZip = await createZip(hostEntries);
+const hostOut = join(ROOT, 'dist', 'ocr-clipper-host.zip');
+writeFileSync(hostOut, Buffer.from(await hostZip.arrayBuffer()));
+console.log(`已生成 ${relative(ROOT, hostOut)}（${hostEntries.length} 个文件）`);
+for (const e of hostEntries) console.log('  ' + e.name);

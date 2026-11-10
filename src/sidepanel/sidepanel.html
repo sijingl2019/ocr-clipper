@@ -21,6 +21,15 @@
 
   <!-- 采集 -->
   <section id="tab-capture" class="tab active">
+    <div id="hostSetup" class="setup" hidden>
+      <strong>需要先安装本机组件</strong>
+      <ol>
+        <li>安装 <a href="https://nodejs.org" target="_blank">Node.js</a> 18 或更新版本</li>
+        <li><a href="https://github.com/sijingl2019/ocr-clipper/releases/latest/download/ocr-clipper-host.zip" target="_blank">下载本机组件 ocr-clipper-host.zip</a>，解压到一个固定位置</li>
+        <li>Windows：双击 <code>install-windows.cmd</code>；macOS / Linux：运行 <code>sh install.sh</code></li>
+        <li>重启浏览器（或在 chrome://extensions 重新加载本扩展）后点击 <button id="recheckBtn" type="button">重新检测</button></li>
+      </ol>
+    </div>
     <div class="field">
       <label>模式</label>
       <div class="seg" id="modeSeg">

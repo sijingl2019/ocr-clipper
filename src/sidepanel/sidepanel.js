@@ -191,6 +191,7 @@ async function checkHost(verbose) {
     const info = await pingHost();
     pill.textContent = `host: ${info.platform}`;
     pill.className = 'pill ok';
+    $('#hostSetup').hidden = true;
     if (verbose) {
       const det = await callHost('detect', {
         agents: Object.fromEntries(Object.entries(settings.agents).map(([k, a]) => [k, a.command])),
@@ -202,10 +203,13 @@ async function checkHost(verbose) {
     pill.textContent = 'host: 未连接';
     pill.className = 'pill err';
     pill.title = e.message;
+    // 只有找不到 host 时才显示安装指引；其他错误（如未授权）看 title / 日志
+    $('#hostSetup').hidden = !/not found|not exist|Specified native messaging host/i.test(e.message);
     if (verbose) $('#hostInfo').textContent = e.message;
   }
 }
 $('#pingBtn').onclick = () => withBusy($('#pingBtn'), () => checkHost(true));
+$('#recheckBtn').onclick = () => withBusy($('#recheckBtn'), () => checkHost(false));
 
 $('#testAgentBtn').onclick = () =>
   withBusy($('#testAgentBtn'), async () => {

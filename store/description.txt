@@ -17,9 +17,9 @@ OCR Clipper：把任何网页变成可编辑的文字和电子书。
 【使用前准备】
 OCR Clipper 需要配合一个本机小组件（Native Messaging host）来调用本机智能体和截图工具：
 1. 安装 Node.js 18 或以上版本，以及至少一个智能体命令行工具（如 Claude Code 或 Codex CLI）
-2. 从项目主页下载本机组件，运行安装脚本：
-   Windows：powershell -ExecutionPolicy Bypass -File host\install-windows.ps1
-   macOS / Linux：sh host/install.sh
+2. 下载本机组件并解压到固定位置：https://github.com/sijingl2019/ocr-clipper/releases/latest/download/ocr-clipper-host.zip
+   Windows：双击 install-windows.cmd
+   macOS / Linux：sh install.sh
 3. 打开侧边栏，右上角显示"host: win32 / darwin / linux"（绿色）即表示连接成功
 
 项目主页与安装说明：https://github.com/sijingl2019/ocr-clipper

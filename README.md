@@ -26,6 +26,8 @@ Chrome 扩展（侧边栏）                       本机 host（Node.js，Nativ
    manifest 中内置了固定 key，扩展 ID 固定为 `alniecnjlgpfdfolhnmflgcjmomdianc`，与安装脚本一致。
 4. 点击工具栏图标打开侧边栏 → 设置 → "检测连接 / 可用工具"。
 
+从应用店安装的用户不需要克隆仓库：下载 [ocr-clipper-host.zip](https://github.com/sijingl2019/ocr-clipper/releases/latest/download/ocr-clipper-host.zip)，解压后 Windows 双击 `install-windows.cmd`，macOS / Linux 运行 `sh install.sh`。该 zip 由 `npm run build` 生成（`dist/ocr-clipper-host.zip`），每次发布时上传到 GitHub Release。
+
 卸载 host：`host\uninstall-windows.ps1`。
 
 ## 使用
